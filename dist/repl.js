@@ -1,37 +1,40 @@
 import { createInterface } from "readline";
-const cleanInput = (input) => {
-  return input.trim().toLowerCase().split(/\s+/);
-};
+import { commandExit } from "./commands.js";
+import { getCommands, sanitizeInput } from "./helpers.js";
 const startRepl = () => {
   const rl = createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: "Input a sentence > ",
+    prompt: "Input a command! \nFor help, input 'help' > ",
   });
   rl.prompt();
   rl.on("line", (line) => {
-    // switch (line.trim()) {
-    //   case "hello":
-    //     console.log("world");
-    //     break;
-    //   case "world":
-    //     console.log("hello");
-    //     break;
-    //   default:
-    //     console.log("default string");
-    // }
-    if (!line.trim().length) {
+    const userInput = sanitizeInput(line);
+    try {
+      if (userInput in getCommands()) {
+        getCommands()[userInput].callback();
+      } else {
+        throw new Error("Invalid command, try again.");
+      }
+    } catch (err) {
+      err instanceof Error
+        ? console.error(err.message)
+        : console.error("Unexpected error, try again!");
+    } finally {
       rl.prompt();
-    } else {
-      const userInput = cleanInput(line);
-      console.log(`Your command was: "${userInput[0]}"`);
     }
-    rl.prompt();
+    // if (!sanitizeInput(line).length) {
+    //   rl.prompt();
+    // } else if (sanitizeInput(line) === "help") {
+    //   getCommands().help.callback();
+    // } else if (sanitizeInput(line) === "exit") {
+    //   getCommands().exit.callback();
+    // }
+    // rl.prompt();
   }).on("close", () => {
-    console.log("\n have a great day");
-    process.exit(0);
+    commandExit();
   });
-  //   const input = process.stdin;
-  //   console.log(input);
 };
-export { cleanInput, startRepl };
+export { startRepl };
+// faith
+// you deserve its
