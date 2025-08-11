@@ -4,28 +4,28 @@ import { getCommands } from "./helpers";
 import { PokeAPI } from "./pokeApi";
 
 interface State {
-  state: Interface;
-  commands: () => Record<Command, CLICommand>;
+  rl: Interface;
+  commands: Record<Command, CLICommand>;
   pokeApi: PokeAPI;
   nextLocationsURL: string | null;
   previousLocationsURL: string | null;
 }
 
 const initState = (): State => {
-  const state = createInterface({
+  const rl = createInterface({
     input: process.stdin,
     output: process.stdout,
     prompt: "Input a command! \nFor help, input 'help' > ",
   });
 
   return {
-    state,
-    commands: getCommands,
+    rl,
+    commands: getCommands(),
+    pokeApi: new PokeAPI(),
     nextLocationsURL: null,
     previousLocationsURL: null,
-    pokeApi: new PokeAPI(),
   };
 };
 
 export type { State };
-export { initState };
+export default initState;

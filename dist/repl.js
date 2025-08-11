@@ -1,23 +1,24 @@
 import { commandExit } from "./commands.js";
 import { sanitizeInput } from "./helpers.js";
-const startRepl = (initState) => {
-  const { state, commands } = initState;
-  state.prompt();
-  state
-    .on("line", (line) => {
-      const userInput = sanitizeInput(line);
-      try {
-        commands()[userInput].callback();
-      } catch (err) {
-        console.error(
-          "Invalid command, for help, input 'help' to the console."
+const startRepl = (state) => {
+  const { rl, commands } = state;
+  rl.prompt();
+  rl.on("line", async (line) => {
+    const userInput = sanitizeInput(line);
+    try {
+      if (!commands[userInput]) {
+        throw new Error(
+          "Invalid, command, for help, input 'help' to the console"
         );
-      } finally {
-        state.prompt();
       }
-    })
-    .on("close", () => {
-      commandExit();
-    });
+      await commands[userInput].callback(state);
+    } catch (err) {
+      console.error(err.message ?? "Unexpected error, try again.");
+    } finally {
+      rl.prompt();
+    }
+  }).on("close", () => {
+    commandExit();
+  });
 };
 export { startRepl };

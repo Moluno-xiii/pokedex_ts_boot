@@ -1,8 +1,8 @@
 import { startRepl } from "./repl";
-import { initState } from "./state";
+import initState from "./state";
 
-function main() {
-  const state = initState();
+async function main() {
+  const state = await initState();
   console.log("Hello, world!");
   startRepl(state);
 }

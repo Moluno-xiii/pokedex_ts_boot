@@ -14,12 +14,12 @@ const getCommands = (): Record<Command, CLICommand> => {
   return {
     exit: {
       name: "exit",
-      description: "Exits the pokedex",
+      description: "Exits the pokedex.",
       callback: commandExit,
     },
     help: {
       name: "help",
-      description: "Shows help instructions",
+      description: "Shows help instructions.",
       callback: commandHelp,
     },
     map: {
@@ -30,9 +30,9 @@ const getCommands = (): Record<Command, CLICommand> => {
     },
     mapb: {
       name: "mapb",
-      description:
-        "Displays the names of 20 location areas in the Pokemon world. Each subsequent call displays the previous 20 locations and so on.",
-      callback: (pageUrl: string) => commandMapBack(pageUrl),
+      description: "Get the previous page of locations.",
+      // callback: (pageUrl: string) => commandMapBack(pageUrl),
+      callback: commandMapBack,
     },
   };
 };

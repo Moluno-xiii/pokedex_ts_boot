@@ -1,14 +1,18 @@
 import { createInterface } from "readline";
 import { getCommands } from "./helpers.js";
+import { PokeAPI } from "./pokeApi.js";
 const initState = () => {
-  const state = createInterface({
+  const rl = createInterface({
     input: process.stdin,
     output: process.stdout,
     prompt: "Input a command! \nFor help, input 'help' > ",
   });
   return {
-    state,
-    commands: getCommands,
+    rl,
+    commands: getCommands(),
+    pokeApi: new PokeAPI(),
+    nextLocationsURL: null,
+    previousLocationsURL: null,
   };
 };
-export { initState };
+export default initState;

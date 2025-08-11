@@ -3,25 +3,28 @@ import { sanitizeInput } from "./helpers";
 import { State } from "./state";
 import { Command } from "./types";
 
-const startRepl = (initState: State) => {
-  const { state, commands } = initState;
-  state.prompt();
-  state
-    .on("line", (line) => {
-      const userInput: string = sanitizeInput(line);
-      try {
-        commands()[userInput as Command].callback();
-      } catch (err) {
-        console.error(
+const startRepl = (state: State) => {
+  const { rl, commands } = state;
+  rl.prompt();
+  rl.on("line", async (line) => {
+    const userInput: string = sanitizeInput(line);
+    try {
+      if (!commands[userInput as Command]) {
+        throw new Error(
           "Invalid command, for help, input 'help' to the console."
         );
-      } finally {
-        state.prompt();
       }
-    })
-    .on("close", () => {
-      commandExit();
-    });
+      await commands[userInput as Command].callback(state);
+    } catch (err) {
+      console.error(
+        err instanceof Error ? err.message : "Unexpected error, try again."
+      );
+    } finally {
+      rl.prompt();
+    }
+  }).on("close", () => {
+    commandExit();
+  });
 };
 
 export { startRepl };
