@@ -1,4 +1,9 @@
-import { commandExit, commandHelp } from "./commands";
+import {
+  commandExit,
+  commandHelp,
+  commandMap,
+  commandMapBack,
+} from "./commands";
 import { Command, CLICommand } from "./types";
 
 const sanitizeInput = (input: string): string => {
@@ -16,6 +21,18 @@ const getCommands = (): Record<Command, CLICommand> => {
       name: "help",
       description: "Shows help instructions",
       callback: commandHelp,
+    },
+    map: {
+      name: "map",
+      description:
+        "Displays the names of 20 location areas in the Pokemon world. Each subsequent call displays the next 20 locations and so on.",
+      callback: commandMap,
+    },
+    mapb: {
+      name: "mapb",
+      description:
+        "Displays the names of 20 location areas in the Pokemon world. Each subsequent call displays the previous 20 locations and so on.",
+      callback: (pageUrl: string) => commandMapBack(pageUrl),
     },
   };
 };
