@@ -1,17 +1,26 @@
+import { Cache, CacheEntry } from "./pokeCache";
+
 export class PokeAPI {
   private static readonly baseURL = "https://pokeapi.co/api/v2";
+  cache = new Cache(6000);
 
   constructor() {}
 
   async fetchLocations(pageURL?: string): Promise<ShallowLocations> {
+    const apiURL = pageURL ?? `${PokeAPI.baseURL}/location-area`;
     try {
-      const request = await fetch(
-        pageURL ?? `${PokeAPI.baseURL}/location-area`
-      );
+      const cachedResult = this.cache.get<CacheEntry<ShallowLocations>>(apiURL);
+      if (cachedResult) {
+        return cachedResult.val;
+      }
+      const request = await fetch(apiURL);
       if (!request.ok) {
         throw new Error("Network error, try again.");
       }
-      return request.json();
+
+      const data: ShallowLocations = await request.json();
+      this.cache.add<ShallowLocations>(apiURL, data);
+      return data;
     } catch (err) {
       throw new Error(
         err instanceof Error ? err.message : "Unexpected error, try again"
@@ -20,14 +29,20 @@ export class PokeAPI {
   }
 
   async fetchLocation(locationName: string): Promise<Location> {
+    const apiURL = `${PokeAPI.baseURL}/location-area/${locationName}`;
     try {
-      const request = await fetch(
-        `${PokeAPI.baseURL}/location-area/${locationName}`
-      );
+      const cachedResult = this.cache.get<CacheEntry<ShallowLocations>>(apiURL);
+      if (cachedResult) {
+        return cachedResult.val;
+      }
+      const request = await fetch(apiURL);
       if (!request.ok) {
         throw new Error("Network error, try again.");
       }
-      return request.json();
+
+      const data = await request.json();
+      this.cache.add<Location>(apiURL, data);
+      return data;
     } catch (err) {
       throw new Error(
         err instanceof Error ? err.message : "Unexpected error, try again"

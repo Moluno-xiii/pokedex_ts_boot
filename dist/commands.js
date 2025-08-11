@@ -1,5 +1,5 @@
 import { getCommands } from "./helpers.js";
-// const pokeAPI = new PokeAPI();
+
 const commandExit = async () => {
   console.log("\nClosing the Pokedex...");
   process.exit(0);

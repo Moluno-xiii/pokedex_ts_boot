@@ -11,12 +11,12 @@ const getCommands = () => {
   return {
     exit: {
       name: "exit",
-      description: "Exits the pokedex",
+      description: "Exits the pokedex.",
       callback: commandExit,
     },
     help: {
       name: "help",
-      description: "Shows help instructions",
+      description: "Shows help instructions.",
       callback: commandHelp,
     },
     map: {
@@ -28,7 +28,6 @@ const getCommands = () => {
     mapb: {
       name: "mapb",
       description: "Get the previous page of locations.",
-      // callback: (pageUrl: string) => commandMapBack(pageUrl),
       callback: commandMapBack,
     },
   };

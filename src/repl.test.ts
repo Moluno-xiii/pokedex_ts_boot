@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { cleanInput } from "./repl";
+import { cleanInput } from "./helpers";
 
 describe.each([
   {

@@ -31,7 +31,6 @@ const getCommands = (): Record<Command, CLICommand> => {
     mapb: {
       name: "mapb",
       description: "Get the previous page of locations.",
-      // callback: (pageUrl: string) => commandMapBack(pageUrl),
       callback: commandMapBack,
     },
   };

@@ -8,12 +8,14 @@ const startRepl = (state) => {
     try {
       if (!commands[userInput]) {
         throw new Error(
-          "Invalid, command, for help, input 'help' to the console"
+          "Invalid command, for help, input 'help' to the console."
         );
       }
       await commands[userInput].callback(state);
     } catch (err) {
-      console.error(err.message ?? "Unexpected error, try again.");
+      console.error(
+        err instanceof Error ? err.message : "Unexpected error, try again."
+      );
     } finally {
       rl.prompt();
     }
