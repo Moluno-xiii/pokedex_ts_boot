@@ -1,13 +1,14 @@
 import { Cache, CacheEntry } from "./pokeCache";
-
+import { ShallowLocations, Location } from "./types";
 export class PokeAPI {
   private static readonly baseURL = "https://pokeapi.co/api/v2";
-  cache = new Cache(6000);
+  cache = new Cache(60000);
 
   constructor() {}
 
   async fetchLocations(pageURL?: string): Promise<ShallowLocations> {
-    const apiURL = pageURL ?? `${PokeAPI.baseURL}/location-area`;
+    const apiURL =
+      pageURL ?? `${PokeAPI.baseURL}/location-area?offset=0&limit=20`;
     try {
       const cachedResult = this.cache.get<CacheEntry<ShallowLocations>>(apiURL);
       if (cachedResult) {
@@ -31,13 +32,21 @@ export class PokeAPI {
   async fetchLocation(locationName: string): Promise<Location> {
     const apiURL = `${PokeAPI.baseURL}/location-area/${locationName}`;
     try {
+      console.log(`Getting dat for ${locationName}...`);
+      if (!locationName) {
+        throw new Error(
+          "No location name provided command is : 'explore <location_name>'"
+        );
+      }
       const cachedResult = this.cache.get<CacheEntry<ShallowLocations>>(apiURL);
       if (cachedResult) {
         return cachedResult.val;
       }
       const request = await fetch(apiURL);
       if (!request.ok) {
-        throw new Error("Network error, try again.");
+        throw new Error(
+          `${request.status} Error fetching '${locationName}' : ${request.statusText}`
+        );
       }
 
       const data = await request.json();
@@ -50,63 +59,3 @@ export class PokeAPI {
     }
   }
 }
-
-export type ShallowLocations = {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Array<{ name: string; url: string }>;
-};
-
-export type Location = {
-  encounter_method_rates: {
-    encounter_method: {
-      name: string;
-      url: string;
-    };
-    version_details: {
-      rate: number;
-      version: {
-        name: string;
-        url: string;
-      };
-    }[];
-  }[];
-  game_index: number;
-  id: number;
-  location: {
-    name: string;
-    url: string;
-  };
-  name: string;
-  names: {
-    language: {
-      name: string;
-      url: string;
-    };
-    name: string;
-  }[];
-  pokemon_encounters: {
-    pokemon: {
-      name: string;
-      url: string;
-    };
-    version_details: {
-      encounter_details: {
-        chance: number;
-        condition_values: any[];
-        max_level: number;
-        method: {
-          name: string;
-          url: string;
-        };
-        min_level: number;
-      }[];
-      max_chance: number;
-      version: {
-        name: string;
-        url: string;
-      };
-    }[];
-  }[];
-};

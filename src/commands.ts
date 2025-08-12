@@ -1,5 +1,5 @@
 import { getCommands } from "./helpers";
-import { State } from "./state";
+import { State } from "./types";
 
 const commandExit = async () => {
   console.log("\nClosing the Pokedex...");
@@ -53,4 +53,26 @@ const commandMapBack = async (state: State) => {
   }
 };
 
-export { commandExit, commandHelp, commandMap, commandMapBack };
+const commandExplore = async (state: State, locationName: string) => {
+  try {
+    // if (!state.previousLocationsURL)
+    //   throw new Error("You're on the first page, run 'map' and try again.");
+    const locationInfo = await state.pokeApi.fetchLocation(locationName);
+    // console.log(`location information for ${locationName} :`, locationInfo);
+    console.dir(locationInfo, { depth: null });
+    // state.nextLocationsURL = locations.next;
+    // state.previousLocationsURL = locations.previous;
+
+    // for (const location of locations.results) {
+    //   console.log(location.name);
+    // }
+  } catch (err) {
+    throw new Error(
+      err instanceof Error
+        ? err.message
+        : `Error getting ${locationName}, check your input nd try again.`
+    );
+  }
+};
+
+export { commandExit, commandHelp, commandMap, commandMapBack, commandExplore };

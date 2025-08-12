@@ -3,7 +3,6 @@ import initState from "./state";
 
 async function main() {
   const state = await initState();
-  console.log("Hello, world!");
   startRepl(state);
 }
 

@@ -1,5 +1,6 @@
 import {
   commandExit,
+  commandExplore,
   commandHelp,
   commandMap,
   commandMapBack,
@@ -29,6 +30,11 @@ const getCommands = () => {
       name: "mapb",
       description: "Get the previous page of locations.",
       callback: commandMapBack,
+    },
+    explore: {
+      name: "explore",
+      description: "Gets the location information of a given location.",
+      callback: commandExplore,
     },
   };
 };

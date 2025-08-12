@@ -1,15 +1,7 @@
-import { createInterface, type Interface } from "readline";
-import { Command, CLICommand } from "./types";
+import { createInterface } from "readline";
 import { getCommands } from "./helpers";
 import { PokeAPI } from "./pokeApi";
-
-interface State {
-  rl: Interface;
-  commands: Record<Command, CLICommand>;
-  pokeApi: PokeAPI;
-  nextLocationsURL: string | null;
-  previousLocationsURL: string | null;
-}
+import { type State } from "./types";
 
 const initState = (): State => {
   const rl = createInterface({
@@ -27,5 +19,4 @@ const initState = (): State => {
   };
 };
 
-export type { State };
 export default initState;
