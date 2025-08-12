@@ -33,7 +33,7 @@ const commandMap = async (state: State) => {
   }
 };
 
-const commandMapBack = async (state: State) => {
+const commandMapBack = async (state: State): Promise<void> => {
   try {
     if (!state.previousLocationsURL)
       throw new Error("You're on the first page, run 'map' and try again.");
@@ -46,6 +46,7 @@ const commandMapBack = async (state: State) => {
     for (const location of locations.results) {
       console.log(location.name);
     }
+    return;
   } catch (err) {
     throw new Error(
       err instanceof Error ? err.message : "Unexpected error, try agian."
@@ -53,19 +54,13 @@ const commandMapBack = async (state: State) => {
   }
 };
 
-const commandExplore = async (state: State, locationName: string) => {
+const commandExplore = async (
+  state: State,
+  locationName: string
+): Promise<void> => {
   try {
-    // if (!state.previousLocationsURL)
-    //   throw new Error("You're on the first page, run 'map' and try again.");
     const locationInfo = await state.pokeApi.fetchLocation(locationName);
-    // console.log(`location information for ${locationName} :`, locationInfo);
     console.dir(locationInfo, { depth: null });
-    // state.nextLocationsURL = locations.next;
-    // state.previousLocationsURL = locations.previous;
-
-    // for (const location of locations.results) {
-    //   console.log(location.name);
-    // }
   } catch (err) {
     throw new Error(
       err instanceof Error
@@ -75,4 +70,40 @@ const commandExplore = async (state: State, locationName: string) => {
   }
 };
 
-export { commandExit, commandHelp, commandMap, commandMapBack, commandExplore };
+const commandCatch = async (
+  state: State,
+  pokemonName: string
+): Promise<void> => {
+  try {
+    const result = await state.pokeApi.catchPokemon(pokemonName);
+    console.log(result);
+    return;
+  } catch (err) {
+    throw new Error(
+      err instanceof Error ? err.message : "Unexpected error, try again."
+    );
+  }
+};
+
+const commandInspect = async (
+  state: State,
+  pokemonName: string
+): Promise<void> => {
+  try {
+    return;
+  } catch (err) {
+    throw new Error(
+      err instanceof Error ? err.message : "Unexpected error, try again."
+    );
+  }
+};
+
+export {
+  commandExit,
+  commandHelp,
+  commandMap,
+  commandMapBack,
+  commandExplore,
+  commandCatch,
+  commandInspect,
+};

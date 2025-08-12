@@ -1,7 +1,9 @@
 import {
+  commandCatch,
   commandExit,
   commandExplore,
   commandHelp,
+  commandInspect,
   commandMap,
   commandMapBack,
 } from "./commands";
@@ -38,6 +40,16 @@ const getCommands = (): Record<Command, CLICommand> => {
       name: "explore",
       description: "Gets the location information of a given location.",
       callback: commandExplore,
+    },
+    catch: {
+      name: "catch",
+      description: "Catches a pokemon and adds them to your inventory.",
+      callback: commandCatch,
+    },
+    inspect: {
+      name: "inspect",
+      description: "Shows the details of a given pokemon in you inventory.",
+      callback: commandInspect,
     },
   };
 };

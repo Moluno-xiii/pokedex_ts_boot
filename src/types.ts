@@ -1,4 +1,4 @@
-import { createInterface, type Interface } from "readline";
+import { type Interface } from "readline";
 import { PokeAPI } from "./pokeApi";
 
 type CLICommand = {
@@ -15,7 +15,85 @@ interface State {
   previousLocationsURL: string | null;
 }
 
-type Command = "help" | "exit" | "map" | "mapb" | "explore";
+interface Pokemon {
+  abilities: Array<{
+    ability: {
+      name: string;
+      url: string;
+    };
+    is_hidden: boolean;
+    slot: number;
+  }>;
+  base_experience: number;
+  cries: {
+    latest: string;
+    legacy: string;
+  };
+  forms: Array<{ name: string; url: string }>;
+  game_indices: Array<{
+    game_index: number;
+    version: {
+      name: string;
+      url: string;
+    };
+  }>;
+  height: number;
+  held_items: Array<any>;
+  // change this
+  id: number;
+  is_default: boolean;
+  location_area_encounters: string;
+  moves: Array<{
+    move: {
+      name: string;
+      url: string;
+    };
+    version_group_details: Array<{
+      level_learned_at: number;
+      move_learn_method: {
+        name: string;
+        url: string;
+      };
+      order: number | null;
+      version_group: {
+        name: string;
+        url: string;
+      };
+    }>;
+  }>;
+  name: string;
+  order: number;
+  past_abilities: Array<{
+    abilities: Array<{
+      ability: null | string;
+      is_hidden: boolean;
+      slot: number;
+    }>;
+    generation: {
+      name: string;
+      url: string;
+    };
+  }>;
+  past_types: Array<any>;
+  species: {
+    name: string;
+    url: string;
+  };
+  sprites: {
+    back_default: string;
+    back_female: string | null;
+  };
+  weight: number;
+}
+
+type Command =
+  | "help"
+  | "exit"
+  | "map"
+  | "mapb"
+  | "explore"
+  | "catch"
+  | "inspect";
 
 type ShallowLocations = {
   count: number;
@@ -77,4 +155,4 @@ type Location = {
   }[];
 };
 
-export type { CLICommand, Command, ShallowLocations, Location, State };
+export type { CLICommand, Command, ShallowLocations, Location, State, Pokemon };

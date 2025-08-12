@@ -38,6 +38,7 @@ const commandMapBack = async (state) => {
     for (const location of locations.results) {
       console.log(location.name);
     }
+    return;
   } catch (err) {
     throw new Error(
       err instanceof Error ? err.message : "Unexpected error, try agian."
@@ -46,16 +47,8 @@ const commandMapBack = async (state) => {
 };
 const commandExplore = async (state, locationName) => {
   try {
-    // if (!state.previousLocationsURL)
-    //   throw new Error("You're on the first page, run 'map' and try again.");
     const locationInfo = await state.pokeApi.fetchLocation(locationName);
-    // console.log(`location information for ${locationName} :`, locationInfo);
     console.dir(locationInfo, { depth: null });
-    // state.nextLocationsURL = locations.next;
-    // state.previousLocationsURL = locations.previous;
-    // for (const location of locations.results) {
-    //   console.log(location.name);
-    // }
   } catch (err) {
     throw new Error(
       err instanceof Error
@@ -64,4 +57,31 @@ const commandExplore = async (state, locationName) => {
     );
   }
 };
-export { commandExit, commandHelp, commandMap, commandMapBack, commandExplore };
+const commandCatch = async (state, pokemonName) => {
+  try {
+    console.log(await state.pokeApi.catchPokemon(pokemonName));
+    return;
+  } catch (err) {
+    throw new Error(
+      err instanceof Error ? err.message : "Unexpected error, try again."
+    );
+  }
+};
+const commandInspect = async (state, pokemonName) => {
+  try {
+    return;
+  } catch (err) {
+    throw new Error(
+      err instanceof Error ? err.message : "Unexpected error, try again."
+    );
+  }
+};
+export {
+  commandExit,
+  commandHelp,
+  commandMap,
+  commandMapBack,
+  commandExplore,
+  commandCatch,
+  commandInspect,
+};

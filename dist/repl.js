@@ -7,7 +7,6 @@ const startRepl = (state) => {
     const userInput = sanitizeInput(line);
     const command = userInput.split(" ")[0];
     const argument = userInput.split(" ").slice(1);
-    console.log("argument gotten", argument);
     try {
       if (!commands[command]) {
         throw new Error(
