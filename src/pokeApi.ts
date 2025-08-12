@@ -1,17 +1,18 @@
 import { Cache, CacheEntry } from "./pokeCache";
 import { ShallowLocations, Location, Pokemon } from "./types";
 export class PokeAPI {
-  private static readonly baseURL = "https://pokeapi.co/api/v2";
-  cache = new Cache(60000);
-  pokemons = new Map<string, Pokemon>();
+  static readonly #baseURL = "https://pokeapi.co/api/v2";
+  #cache = new Cache(60000);
+  #pokemons = new Map<string, Pokemon>();
 
   constructor() {}
 
   async fetchLocations(pageURL?: string): Promise<ShallowLocations> {
     const apiURL =
-      pageURL ?? `${PokeAPI.baseURL}/location-area?offset=0&limit=20`;
+      pageURL ?? `${PokeAPI.#baseURL}/location-area?offset=0&limit=20`;
     try {
-      const cachedResult = this.cache.get<CacheEntry<ShallowLocations>>(apiURL);
+      const cachedResult =
+        this.#cache.get<CacheEntry<ShallowLocations>>(apiURL);
       if (cachedResult) {
         return cachedResult.val;
       }
@@ -21,7 +22,7 @@ export class PokeAPI {
       }
 
       const data: ShallowLocations = await request.json();
-      this.cache.add<ShallowLocations>(apiURL, data);
+      this.#cache.add<ShallowLocations>(apiURL, data);
       return data;
     } catch (err) {
       throw new Error(
@@ -31,7 +32,7 @@ export class PokeAPI {
   }
 
   async fetchLocation(locationName: string): Promise<Location> {
-    const apiURL = `${PokeAPI.baseURL}/location-area/${locationName}`;
+    const apiURL = `${PokeAPI.#baseURL}/location-area/${locationName}`;
     try {
       console.log(`Getting data for ${locationName}...`);
       if (!locationName) {
@@ -39,7 +40,8 @@ export class PokeAPI {
           "No location name provided command is : 'explore <location_name>'"
         );
       }
-      const cachedResult = this.cache.get<CacheEntry<ShallowLocations>>(apiURL);
+      const cachedResult =
+        this.#cache.get<CacheEntry<ShallowLocations>>(apiURL);
       if (cachedResult) {
         return cachedResult.val;
       }
@@ -51,7 +53,7 @@ export class PokeAPI {
       }
 
       const data = await request.json();
-      this.cache.add<Location>(apiURL, data);
+      this.#cache.add<Location>(apiURL, data);
       return data;
     } catch (err) {
       throw new Error(
@@ -61,28 +63,22 @@ export class PokeAPI {
   }
 
   async catchPokemon(pokemonName: string): Promise<string> {
-    const hasUserCapturedPokemon = this.pokemons.has(pokemonName);
+    const hasUserCapturedPokemon = this.#pokemons.has(pokemonName);
     if (hasUserCapturedPokemon) {
       return "You have already captured " + pokemonName;
     }
     try {
-      const pokemon = await this.#fetchPokemon(pokemonName);
       console.log(`Throwing a Pokeball at ${pokemonName}...\n`);
+      const pokemon = await this.#fetchPokemon(pokemonName);
       const randomNumber = Math.floor(
         Math.random() *
           (Math.floor(pokemon.base_experience * 1.5) -
             Math.ceil(Math.sqrt(pokemon.base_experience)))
       );
       if (pokemon.base_experience > randomNumber) {
-        console.log(
-          "random number : ",
-          randomNumber,
-          " base experience : ",
-          pokemon.base_experience
-        );
         return `${pokemonName} escaped!`;
       }
-      this.pokemons.set(pokemonName, pokemon);
+      this.#pokemons.set(pokemonName, pokemon);
       return `${pokemonName} was caught and added to your inventory!`;
     } catch (err) {
       throw new Error(
@@ -92,8 +88,8 @@ export class PokeAPI {
   }
 
   async #fetchPokemon(pokemonName: string): Promise<Pokemon> {
-    const apiURL = `${PokeAPI.baseURL}/pokemon/${pokemonName}`;
-    const cachedResult = this.cache.get<CacheEntry<Pokemon>>(apiURL);
+    const apiURL = `${PokeAPI.#baseURL}/pokemon/${pokemonName}`;
+    const cachedResult = this.#cache.get<CacheEntry<Pokemon>>(apiURL);
     if (cachedResult) return cachedResult.val;
     try {
       if (!pokemonName)
@@ -102,13 +98,12 @@ export class PokeAPI {
         );
       const request = await fetch(apiURL);
       if (!request.ok) {
-        console.log("request object", request);
         throw new Error(
           `Error getting '${pokemonName} : ${request.statusText}.\nCheck your input and make sure pokemon exists.`
         );
       }
       const data: Pokemon = await request.json();
-      this.cache.add<Pokemon>(apiURL, data);
+      this.#cache.add<Pokemon>(apiURL, data);
       return data;
     } catch (err) {
       throw new Error(
@@ -117,5 +112,18 @@ export class PokeAPI {
           : "Error getting pokemon, try again later."
       );
     }
+  }
+
+  inspectPokemon(pokemonName: string): Pokemon {
+    const pokemon = this.#pokemons.get(pokemonName);
+    if (!pokemon) {
+      throw new Error("you have not caught that pokemon");
+    }
+
+    return pokemon;
+  }
+
+  pokedex(): Map<string, Pokemon> {
+    return this.#pokemons;
   }
 }

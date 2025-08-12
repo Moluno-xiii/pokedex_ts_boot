@@ -1,14 +1,14 @@
 import { Cache } from "./pokeCache.js";
 export class PokeAPI {
-  static baseURL = "https://pokeapi.co/api/v2";
-  cache = new Cache(60000);
-  pokemons = new Map();
+  static #baseURL = "https://pokeapi.co/api/v2";
+  #cache = new Cache(60000);
+  #pokemons = new Map();
   constructor() {}
   async fetchLocations(pageURL) {
     const apiURL =
-      pageURL ?? `${PokeAPI.baseURL}/location-area?offset=0&limit=20`;
+      pageURL ?? `${PokeAPI.#baseURL}/location-area?offset=0&limit=20`;
     try {
-      const cachedResult = this.cache.get(apiURL);
+      const cachedResult = this.#cache.get(apiURL);
       if (cachedResult) {
         return cachedResult.val;
       }
@@ -17,7 +17,7 @@ export class PokeAPI {
         throw new Error("Network error, try again.");
       }
       const data = await request.json();
-      this.cache.add(apiURL, data);
+      this.#cache.add(apiURL, data);
       return data;
     } catch (err) {
       throw new Error(
@@ -26,7 +26,7 @@ export class PokeAPI {
     }
   }
   async fetchLocation(locationName) {
-    const apiURL = `${PokeAPI.baseURL}/location-area/${locationName}`;
+    const apiURL = `${PokeAPI.#baseURL}/location-area/${locationName}`;
     try {
       console.log(`Getting data for ${locationName}...`);
       if (!locationName) {
@@ -34,7 +34,7 @@ export class PokeAPI {
           "No location name provided command is : 'explore <location_name>'"
         );
       }
-      const cachedResult = this.cache.get(apiURL);
+      const cachedResult = this.#cache.get(apiURL);
       if (cachedResult) {
         return cachedResult.val;
       }
@@ -45,7 +45,7 @@ export class PokeAPI {
         );
       }
       const data = await request.json();
-      this.cache.add(apiURL, data);
+      this.#cache.add(apiURL, data);
       return data;
     } catch (err) {
       throw new Error(
@@ -54,7 +54,7 @@ export class PokeAPI {
     }
   }
   async catchPokemon(pokemonName) {
-    const hasUserCapturedPokemon = this.pokemons.has(pokemonName);
+    const hasUserCapturedPokemon = this.#pokemons.has(pokemonName);
     if (hasUserCapturedPokemon) {
       return "You have already captured " + pokemonName;
     }
@@ -66,17 +66,10 @@ export class PokeAPI {
           (Math.floor(pokemon.base_experience * 1.5) -
             Math.ceil(Math.sqrt(pokemon.base_experience)))
       );
-      console.log(
-        "random number : ",
-        randomNumber,
-        " base experience : ",
-        pokemon.base_experience
-      );
       if (pokemon.base_experience > randomNumber) {
         return `${pokemonName} escaped!`;
       }
-      this.pokemons.set(pokemonName, pokemon);
-      //   console.log(`${pokemonName} was added to your inventory!`);
+      this.#pokemons.set(pokemonName, pokemon);
       return `${pokemonName} was caught and added to your inventory!`;
     } catch (err) {
       throw new Error(
@@ -85,8 +78,8 @@ export class PokeAPI {
     }
   }
   async #fetchPokemon(pokemonName) {
-    const apiURL = `${PokeAPI.baseURL}/pokemon/${pokemonName}`;
-    const cachedResult = this.cache.get(apiURL);
+    const apiURL = `${PokeAPI.#baseURL}/pokemon/${pokemonName}`;
+    const cachedResult = this.#cache.get(apiURL);
     if (cachedResult) return cachedResult.val;
     try {
       if (!pokemonName)
@@ -95,13 +88,12 @@ export class PokeAPI {
         );
       const request = await fetch(apiURL);
       if (!request.ok) {
-        // console.log("request object", request);
         throw new Error(
-          `Error getting '${pokemonName}' : ${request.statusText}.\nCheck your input and make sure pokemon exists.`
+          `Error getting '${pokemonName} : ${request.statusText}.\nCheck your input and make sure pokemon exists.`
         );
       }
       const data = await request.json();
-      this.cache.add(apiURL, data);
+      this.#cache.add(apiURL, data);
       return data;
     } catch (err) {
       throw new Error(
@@ -110,5 +102,15 @@ export class PokeAPI {
           : "Error getting pokemon, try again later."
       );
     }
+  }
+  inspectPokemon(pokemonName) {
+    const pokemon = this.#pokemons.get(pokemonName);
+    if (!pokemon) {
+      throw new Error("you have not caught that pokemon");
+    }
+    return pokemon;
+  }
+  pokedex() {
+    return this.#pokemons;
   }
 }

@@ -59,7 +59,8 @@ const commandExplore = async (state, locationName) => {
 };
 const commandCatch = async (state, pokemonName) => {
   try {
-    console.log(await state.pokeApi.catchPokemon(pokemonName));
+    const result = await state.pokeApi.catchPokemon(pokemonName);
+    console.log(result);
     return;
   } catch (err) {
     throw new Error(
@@ -69,6 +70,27 @@ const commandCatch = async (state, pokemonName) => {
 };
 const commandInspect = async (state, pokemonName) => {
   try {
+    const pokemon = state.pokeApi.inspectPokemon(pokemonName);
+    console.dir(pokemon, { depth: null });
+    return;
+  } catch (err) {
+    throw new Error(
+      err instanceof Error ? err.message : "Unexpected error, try again."
+    );
+  }
+};
+const commandPokedex = async (state) => {
+  try {
+    const pokemons = state.pokeApi.pokedex();
+    if (pokemons.size < 1) {
+      console.log("You haven't caught any pokemons yet.");
+      return;
+    }
+    console.log("Your pokedex:");
+    for (const [name, details] of pokemons) {
+      console.log(`-${name}`);
+    }
+    // console.dir(pokemon, { depth: null });
     return;
   } catch (err) {
     throw new Error(
@@ -84,4 +106,5 @@ export {
   commandExplore,
   commandCatch,
   commandInspect,
+  commandPokedex,
 };

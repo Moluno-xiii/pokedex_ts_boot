@@ -2,7 +2,7 @@ import { type Interface } from "readline";
 import { PokeAPI } from "./pokeApi";
 
 type CLICommand = {
-  name: Command;
+  name: string;
   description: string;
   callback: (state: State, ...args: string[]) => Promise<void>;
 };
@@ -93,7 +93,8 @@ type Command =
   | "mapb"
   | "explore"
   | "catch"
-  | "inspect";
+  | "inspect"
+  | "pokedex";
 
 type ShallowLocations = {
   count: number;

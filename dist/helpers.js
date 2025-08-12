@@ -6,6 +6,7 @@ import {
   commandInspect,
   commandMap,
   commandMapBack,
+  commandPokedex,
 } from "./commands.js";
 const sanitizeInput = (input) => {
   return input.trim().toLowerCase();
@@ -34,19 +35,24 @@ const getCommands = () => {
       callback: commandMapBack,
     },
     explore: {
-      name: "explore",
+      name: "explore <location>",
       description: "Gets the location information of a given location.",
       callback: commandExplore,
     },
     catch: {
-      name: "catch",
+      name: "catch <pokemon_name>",
       description: "Catches a pokemon and adds them to your inventory.",
       callback: commandCatch,
     },
     inspect: {
-      name: "catch",
-      description: "Shows the details of a given pokemon in you inventory",
+      name: "inspect <pokemon_name>",
+      description: "Shows the details of a given pokemon in your inventory.",
       callback: commandInspect,
+    },
+    pokedex: {
+      name: "pokedex",
+      description: "Displays the names of all pokemon's in your inventory.",
+      callback: commandPokedex,
     },
   };
 };
